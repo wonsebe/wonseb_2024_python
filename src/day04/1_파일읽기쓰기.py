@@ -66,7 +66,8 @@ f.close()   #파일 닫기
     # with 자료생성 as 변수:
         # 해당 자료를 변수에 대입하고 with 종료되면 자동으로 변수는 초기화
 with open('foo.txt', 'w')as f:
-        # open 된 파일을 f변수에 대입하고, with 작업이 종료되면 f변수도 초기화, close 된다.
+        # open 된 파일을 f변수에 대입하고, with 작업이 종료되면 f변수도 초기화, clos-+
+        # e 된다.
     f.write("Life is too short,you need python")
 #확인: day04폴더에 foo.txt 파일 생성 되었는지 내용 확인
 
