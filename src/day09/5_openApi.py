@@ -12,8 +12,8 @@ def getRequestUrl(url):
             return 응답객체.read().decode('utf-8')
     except Exception as e:
         return None
-#[code 3]
-def
+# #[code 3]
+# def
 #[code 1]
 def main():
     sn_cd=int(input("조회하고 싶은 제안의 코드 폐의약품:196924 / 플로깅:196923/ 서울시립과학관:196922 :"))
