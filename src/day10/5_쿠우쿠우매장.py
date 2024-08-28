@@ -1,6 +1,4 @@
 #5_쿠우쿠우매장.py
-
-
 from bs4 import  BeautifulSoup
 import urllib.request
 import pandas as pd
@@ -24,6 +22,7 @@ def qooqoo_store(result):
         for row in tbody.select('tr'):
 
             tds=row.select('td')
+            if len(tds) <= 1: continue
             # print(tds)
             store_qno= tds[0].string
             print(store_qno)
@@ -38,15 +37,6 @@ def qooqoo_store(result):
 
             # store = [store_qno, store_name, store_phone, store_address, store_time]
             # result.append(store)  # 리스트 안에 리스트 요소 추가 : 2차원 리스트
-
-
-
-
-
-
-
-
-
 
 #[code 0]
 def main():
