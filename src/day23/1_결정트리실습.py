@@ -77,20 +77,20 @@ print( model.get_params() )
 params = {
     'max_depth' : [ 6 , 8 , 10 , 12 , 16 , 20 , 24 ] # 다양한 트리의 최대 노드깊이 를 설정
 }
-# (3) 다양한 하이퍼파라미터 조합을 시도해서 최적의 하이퍼파라미터  를 찾는데 사용되는 모듈 , 교차 검증 제공
+# (3) 다양한 하이퍼파라미터 조합을 시도해서 최적의 하이퍼파라미터  를 찾는데 사용되는 모듈 , 교차 정리.txt 제공
 from sklearn.model_selection import GridSearchCV
     # cv 객체 생성
     # 미리 설정한 'params'의 'max_depth' 라는 최대 노드깊이를 (5회)교차 검증하는 cv 객체
 grid_cv = GridSearchCV( model , param_grid = params , scoring='accuracy' , cv = 5 , return_train_score= True )
     # GridSearchCV( 확인할 트리 모델객체 ,  param_grid = 테스트할 설정변수 , scoring='accuracy정확도' , cv = 검증횟수
         # scoring='accuracy' : # 모델 평가 기준을 정확도 기준으로 하겠다는 뜻을 가진 속성
-        # cv = 5    #  교차 검증 # 데이터를 5개로 나누어서 5번 반복해서 모델 학습 하겠 다는 뜻을 가진 속성
+        # cv = 5    #  교차 정리.txt # 데이터를 5개로 나누어서 5번 반복해서 모델 학습 하겠 다는 뜻을 가진 속성
         # return_train_score= True : 검증후 점수도 같이 반환 하겠다는 뜻을 가진 속성
-    # cv 객체 검증
+    # cv 객체 정리.txt
 grid_cv.fit( X_train , Y_train )
-    # 검증 결과 확인  # .cv_results_
+    # 정리.txt 결과 확인  # .cv_results_
 print(grid_cv.cv_results_ )
-    # 검증 결과를 데이터프레임 객체로 변환
+    # 정리.txt 결과를 데이터프레임 객체로 변환
 cv_results_df = pd.DataFrame( grid_cv.cv_results_ )
     # 필요한 열(필드) 확인
 print( cv_results_df[[ 'param_max_depth' , 'mean_test_score' , 'mean_train_score'] ])
@@ -101,8 +101,8 @@ print( grid_cv.best_score_   , grid_cv.best_params_ )
 '''
 # 12 (모델의 성능 개선) 최적의 하이퍼 파라미터 찾기2
 params = {
-    'max_depth' : [  8 ,  16 , 20 ] ,       # 트리의 최대 깊이 로 검증 하겠다.
-    'min_samples_split' : [ 8 , 16 , 24 ]    # 노드를 분할 하기 위해 사용 되는 최소 샘플 수 의 값들 을 검증 하겠다.
+    'max_depth' : [  8 ,  16 , 20 ] ,       # 트리의 최대 깊이 로 정리.txt 하겠다.
+    'min_samples_split' : [ 8 , 16 , 24 ]    # 노드를 분할 하기 위해 사용 되는 최소 샘플 수 의 값들 을 정리.txt 하겠다.
 }
 from sklearn.model_selection import GridSearchCV
 grid_cv = GridSearchCV( model , param_grid = params , scoring='accuracy' , cv = 5 , return_train_score= True )

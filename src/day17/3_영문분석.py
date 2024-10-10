@@ -39,8 +39,8 @@ all_title=all_files_data_concat['제목']
 # print(표제어객체)
 
 #단어 토큰화
-words=[]
-for title in all_title:
-
-
-
+# words=[]
+# for title in all_title:
+#
+#
+#
