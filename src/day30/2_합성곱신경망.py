@@ -49,3 +49,4 @@ img = cv2.resize( img , dsize=( 32 , 32) )
 img = img / 255.0
 result = model.predict( img[ tf.newaxis , ... ] ) # ( 32 , 32 , 3 ) --> ( 1 , 32 , 32 , 3 )
 print( tf.argmax( result[0]).numpy() ) # 가장 높은 확률을 가진 종속변수 # 1
+
