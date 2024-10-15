@@ -104,7 +104,7 @@ print(model.summary())
 model.compile(optimizer='adam',loss='sparse_categorical_crossentropy',metrics=['accuracy'])
 
 #모델 훈련
-history=model.fit(x_train_in,y_train,validation_data=(x_vaild_in,y_valid),epochs=10)
+history=model.fit(x_train_in,y_train,validation_data=(x_vaild_in,y_valid),epochs=3)
 
 #모델 성능
 val_loss,val_acc=model.evaluate(x_vaild_in,y_valid)
@@ -141,7 +141,7 @@ model.compile(optimizer='adam',loss={'digit_dense':'sparse_categorical_crossentr
 
 #모델 훈련 #다중 출력시 훈련용과 검증용이 다중이 되므로 {} 딕셔너리 구조 사용.
 history= model.fit({'inputs':x_train_in},{'digit_dense':y_train, 'odd_dense':y_train_odd},
-                  validation_data=({'inputs':x_vaild_in},{'digit_dense':y_valid, 'odd_dense':y_valid_odd}),epochs=10)
+                  validation_data=({'inputs':x_vaild_in},{'digit_dense':y_valid, 'odd_dense':y_valid_odd}),epochs=3)
 
 #모델 성능 평가
 model.evaluate({'inputs':x_vaild_in},{'digit_dense':y_valid, 'odd_dense':y_valid,'odd_dense':y_valid_odd})
@@ -156,6 +156,7 @@ model.evaluate({'inputs':x_vaild_in},{'digit_dense':y_valid, 'odd_dense':y_valid
 #     plt.show()
 #
 # plot_image(x_vaild,0)
+
 #모델 예측
 print(y_valid[0])
 digit_preds,odd_preds=model.predict(x_vaild_in)
@@ -163,5 +164,56 @@ print(digit_preds[0])
 print(odd_preds[0])
 
 
+# 어제꺼 이어서 기존 코드에 새로운 코드넣어서 새로운 모델 만들기
+#전이 학습
 
+#레이어의 name 속성을 이용한 특정 레이어 추출 #앞의 모델에서 flatten_layer 출력을 추출
+#(1) 기존의 Functional API 로 생성한 모델에서 특정 레이어 추출해서 새로운 Functional API 모델 생성하기
+base_model_output=model.get_layer('flatten_layer').output #특정 레이어와 연결된 레이어까지 추출 - conv <- pooling <- flatten
 
+#앞의 출력을 출력으로 하는 모델 정의
+base_model=tf.keras.models.Model(inputs=model.input,outputs=base_model_output,name='base')
+print(base_model.summary()) #기존 모델에서 입력층과 출력층은 플래톤까지 레이어
+
+#(2) 출력 레이어 추가하는 새로운 Sequential API 모델 생성하기.
+digit_model=tf.keras.Sequential([base_model,tf.keras.layers.Dense(10,activation='softmax')]) #다중 분류여서 softmax를 사용
+print(digit_model.summary())
+
+# functional API ( input -> conv -> pooling -> flatten ) -> Dense
+#(3) 모델 컴파일
+digit_model.compile(optimizer='adam',loss='sparse_categorical_crossentropy',metrics=['accuracy'])
+#(4)
+digit_model.fit(x_train_in,y_train,validation_data=(x_vaild_in,y_valid),epochs=3)
+
+#특정 레이어 모델을 속성을 이용해서 훈련이 업데이트 되지 않도록 고정시키자.
+#베이스 모델의 가중치 고정
+base_model_frozen=tf.keras.models.Model(inputs=model.input,outputs=base_model_output,name='base_frozen')
+base_model_frozen.trainable=False # 모델의 파라미터 값이 고정되면서 훈련을 통해서 업데이트 되지 않는다. 훈련이 안됨.
+print(base_model_frozen.summary())
+
+#1. Functional API 적용
+dense_output=tf.keras.layers.Dense(10,activation='softmax')(base_model_frozen.output)
+digit_model_frozen=tf.keras.models.Model(inputs=base_model_frozen.input,outputs=dense_output)
+print(digit_model_frozen.summary())
+
+#모델 컴파일
+digit_model_frozen.compile(optimizer='adam',loss='sparse_categorical_crossentropy',metrics=['accuracy'])
+
+#모델 훈련
+history=digit_model_frozen.fit(x_train_in,y_train,validation_data=(x_vaild_in,y_valid),epochs=3)
+
+#베이스 모델의 Con2D 레이어의 가중치만 고정 (Freeze Layer)
+base_model_frozen2=tf.keras.models.Model(inputs=model.input,outputs=base_model_output,name='base_frozen2')
+base_model_frozen2.get_layer('conv2d_layer').trainable=False #특정 레이어 name 속성을 이용한 레이어의 파라미터 값을 고정하고 훈련을 취소한다.
+print(base_model_frozen2.summary())
+
+#Functional API 적용
+dense_output2=tf.keras.layers.Dense(10,activation='softmax')(base_model_frozen2.output)
+digit_model_frozen2=tf.keras.models.Model(inputs=base_model_frozen2.input,outputs=dense_output2)
+print(digit_model_frozen2.summary())
+
+#모델 컴파일
+digit_model_frozen2.compile(optimizer='adam',loss='sparse_categorical_crossentropy',metrics=['accuracy'])
+
+#모델 훈련
+history=digit_model_frozen2.fit(x_train_in,y_train,validation_data=(x_vaild_in,y_valid),epochs=3)
