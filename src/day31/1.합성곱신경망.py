@@ -29,6 +29,7 @@
 
 #1.데이터셋 준비
 import tensorflow as tf
+
 import numpy as np
 
 #mnist 손글씨 이미지 데이터 로드
